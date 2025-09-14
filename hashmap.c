@@ -40,8 +40,27 @@ int is_equal(void* key1, void* key2){
 
 
 void insertMap(HashMap * map, char * key, void * value) {
+    if (map == NULL || key == NULL) return;
+    
+    if (searchMap(map, key) != NULL) return;
+    
+    long index = hash(key, map->capacity);
+    
+    while (map->buckets[index] != NULL && map->buckets[index]->key != NULL) {
+        index = (index + 1) % map->capacity;
+    }
 
-
+    if (map->buckets[index] == NULL) {
+        map->buckets[index] = (Pair *)malloc(sizeof(Pair));
+        if (map->buckets[index] == NULL) return;
+    }
+    
+    
+    map->buckets[index]->key = strdup(key);  
+    map->buckets[index]->value = value;
+    
+    map->size++;
+    map->current = index;
 }
 
 void enlarge(HashMap * map) {
